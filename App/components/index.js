@@ -1,2 +1,5 @@
 export Navigation from './Navigation/Navigation'
 export Home from './Home/Home'
+export FacebookAuthButton from './FacebookAuthButton/FacebookAuthButton'
+export Authenticate from './Authenticate/Authenticate'
+export Results from './Results/Results'

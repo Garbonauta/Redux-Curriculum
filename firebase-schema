@@ -1,0 +1,22 @@
+users
+  [uids]
+    info
+      name
+      avatar
+    usersVotedPolls
+      [pollid]
+        decision
+        decisionText
+
+Decision
+  [pollid]
+    createdUserName
+    createdUID
+    title
+    timestamp
+    decisionOne
+      Text
+      Count
+    decisionTwo
+     text
+     count

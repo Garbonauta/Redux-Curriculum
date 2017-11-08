@@ -4,9 +4,8 @@
 
 # IntelliJ project files
 .idea
-*.iml
 out
 gen
 .gitignore
-.idea/
 node_modules/
+npm-debug.log

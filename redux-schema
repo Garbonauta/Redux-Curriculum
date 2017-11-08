@@ -1,0 +1,37 @@
+users
+  isAuthed
+  isFetching
+  error
+  autheduserid
+  [uid]
+    info
+      Name
+      avatar
+    [UsersVotedPolls]
+      id
+        votedDecision
+        voteText
+
+modal
+  isOpen
+  Title
+  firstDecision
+  secondDecision
+
+Decisions
+  isFetching
+  error
+  [decisions]
+    title
+    timestamp
+    userName
+    FirstDecision
+      text:
+      votes
+    secondDecision
+      text
+      votes
+
+	listeners: {
+		[listenerId]: true
+	}
