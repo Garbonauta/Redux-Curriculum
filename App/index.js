@@ -8,7 +8,6 @@ import { routerReducer, routerMiddleware } from 'react-router-redux'
 import thunk from 'redux-thunk'
 import { App } from 'containers'
 import * as reducers from 'redux/modules'
-import { checkIfAuthed } from 'helpers/auth'
 
 const composeEnhancers = composeWithDevTools({})
 

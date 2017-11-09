@@ -1,0 +1,48 @@
+.darkBtn {
+	composes: darkBtn from 'sharedStyles/styles.css';
+}
+
+.newDecisionTop {
+	composes: flexContainer from 'sharedStyles/styles.css';
+	padding: 11px;
+	background: #ffffff;
+	color: #1877e6;
+	font-size: 23px;
+}
+
+.titleContainer {
+	composes: baseTextAreaContainer from 'sharedStyles/styles.css';
+	height: 40px;
+}
+
+.decisionContainer {
+	composes: baseTextAreaContainer from 'sharedStyles/styles.css';
+}
+
+.titleInput {
+	composes: baseTextArea from 'sharedStyles/styles.css';
+	height: 25px;
+}
+
+.decisionInput {
+	composes: baseTextArea from 'sharedStyles/styles.css';
+}
+
+.or {
+	text-align: center;
+	font-size: 25px;
+	color: #a4a4a4;
+}
+
+.submitDecisionBtn {
+	composes: darkBtn from 'sharedStyles/styles.css';
+	text-align: center;
+	display: block;
+	width: 150px;
+	margin: 0 auto;
+}
+
+.submitDecisionBtn:disabled {
+	background: #c6c6c6;
+	border: 1px solid #c6c6c6;
+}

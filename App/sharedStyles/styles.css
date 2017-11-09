@@ -22,6 +22,12 @@ html, body {
 	font-weight: 100;
 }
 
+.pageHeader {
+	text-align: center;
+	font-size: 40px;
+	font-weight: 100;
+}
+
 .errorMsg {
 	color: #FF7777;
 	font-size: 22px;
@@ -38,4 +44,37 @@ html, body {
 	justify-content: center;
 	align-items: center;
 	flex-direction: column;
+}
+
+.darkBtn {
+	background: #4a90e2;
+	color: #fff;
+	text-align: center;
+	border-radius: 5px;
+	padding: 10px 15px;
+	font-size: 16px;
+	cursor: pointer;
+	border: 1px solid #4a90e2;
+}
+
+.flexContainer {
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.baseTextAreaContainer {
+	display: flex;
+	height: 110px;
+	margin: 10px;
+}
+
+.baseTextArea {
+	flex: 1;
+	border-radius: 3px;
+	padding: 8px 10px;
+	font-size: 18px;
+	resize: none;
+	border-width: 0;
 }

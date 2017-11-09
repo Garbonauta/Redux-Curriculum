@@ -1,5 +1,6 @@
 import { Map } from 'immutable'
 import auth, { logout, saveUser } from 'helpers/auth'
+import { fetchUsersDecisions } from 'helpers/api'
 import { formatUserInfo } from 'helpers/utils'
 
 const AUTH_USER = 'AUTH_USER'
@@ -8,6 +9,7 @@ const FETCHING_USER = 'FETCHING_USER'
 const FETCHING_USER_SUCCESS = 'FETCHING_USER_SUCCESS'
 const FETCHING_USER_ERROR = 'FETCHING_USER_ERROR'
 const REMOVE_USER_FETCHING = 'REMOVE_USER_FETCHING'
+const ADD_USERS_MADE_DECISIONS = 'ADD_USERS_MADE_DECISIONS'
 
 export function authUser (uid) {
   return {
@@ -51,6 +53,21 @@ export function removeUserFetching () {
   }
 }
 
+export function addUsersMadeDecisions (uid, usersDecisions) {
+  return {
+    type: ADD_USERS_MADE_DECISIONS,
+    uid,
+    usersDecisions,
+  }
+}
+
+export function fetchAndAddUsersMadeDecisions (uid) {
+  return function (dispatch) {
+    fetchUsersDecisions(uid)
+      .then((decisions) => dispatch(addUsersMadeDecisions(uid, decisions)))
+  }
+}
+
 export function fetchAndHandleAuthedUser () {
   return function (dispatch) {
     dispatch(fetchingUser())
@@ -72,6 +89,7 @@ export function fetchAndHandleAuthedUser () {
 
 const initialUserState = Map({
   lastUpdated: 0,
+  decisionsMade: Map({}),
   info: {
     name: '',
     uid: '',
@@ -85,6 +103,10 @@ function user (state = initialUserState, action) {
       return state.merge({
         lastUpdated: action.timestamp,
         info: action.user,
+      })
+    case ADD_USERS_MADE_DECISIONS :
+      return state.merge({
+        decisionsMade: Map(action.usersDecisions),
       })
     default :
       return state
@@ -123,11 +145,15 @@ export default function users (state = initialState, action) {
       return state.merge({
         isFetching: false,
         error: '',
-        [action.uid]: user(state[action.uid], action),
+        [action.uid]: user(state.get(action.uid), action),
       })
     case REMOVE_USER_FETCHING :
       return state.merge({
         isFetching: false,
+      })
+    case ADD_USERS_MADE_DECISIONS:
+      return state.merge({
+        [action.uid]: user(state.get(action.uid), action),
       })
     default :
       return state

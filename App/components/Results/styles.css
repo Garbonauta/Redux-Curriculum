@@ -1,0 +1,31 @@
+.errorMsg {
+	composes: errorMsg from 'sharedStyles/styles.css';
+}
+
+.header {
+	composes: pageHeader from 'sharedStyles/styles.css';
+}
+
+.decisionContainer {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 70%;
+	max-width: 1000px;
+	margin: 20px auto;
+	padding-left: 10px;
+	border-left: 3px solid;
+	cursor: pointer;
+}
+
+.decisionTitle {
+	font-weight: 700;
+	margin-bottom: 10px;
+	font-size: 20px;
+}
+
+.icon {
+	height: 30px;
+	width: 30px;
+	margin-right: 5px;
+}

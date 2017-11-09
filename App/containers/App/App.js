@@ -1,10 +1,11 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { HomeContainer, AuthenticateContainer, ResultsContainer } from 'containers'
+import { HomeContainer, AuthenticateContainer, ResultsContainer, DecisionContainer } from 'containers'
 import { Navigation } from 'components'
-import { formatUserInfo } from 'helpers/utils'
+import { formatUserInfo, staleDecisions } from 'helpers/utils'
 import * as usersActionCreators from 'redux/modules/users'
 import * as routeActionCreators from 'redux/modules/route'
+import * as decisionsActionCreators from 'redux/modules/decisions'
 import { firebaseAuth } from 'config/constants'
 import { ConnectedRouter } from 'react-router-redux'
 import { Route, Switch, Redirect } from 'react-router-dom'
@@ -44,10 +45,14 @@ class App extends React.Component {
     history: PropTypes.object.isRequired,
     isAuthed: PropTypes.bool.isRequired,
     isFetching: PropTypes.bool.isRequired,
+    decisionsListener: PropTypes.bool.isRequired,
+    lastUpdated: PropTypes.number.isRequired,
     removeUserFetching: PropTypes.func.isRequired,
     fetchingUserSuccess: PropTypes.func.isRequired,
     authUser: PropTypes.func.isRequired,
     pushAndDispatch: PropTypes.func.isRequired,
+    fetchAndAddUsersMadeDecisions: PropTypes.func.isRequired,
+    setAndHandleDecisionListener: PropTypes.func.isRequired,
   }
   componentDidMount = () => {
     firebaseAuth().onAuthStateChanged((user) => {
@@ -60,12 +65,17 @@ class App extends React.Component {
             uid: user.uid,
           })
         this.props.authUser(user.uid)
+        this.props.fetchAndAddUsersMadeDecisions(user.uid)
         this.props.fetchingUserSuccess(user.uid, userInfo, Date.now())
       } else {
         this.props.removeUserFetching()
       }
     })
+    if (!this.props.decisionsListener || staleDecisions(this.props.lastUpdated)) {
+      this.props.setAndHandleDecisionListener()
+    }
   }
+
   render () {
     const {history, isAuthed, isFetching, pushAndDispatch} = this.props
     return (
@@ -93,6 +103,12 @@ class App extends React.Component {
                 isFetching={isFetching}
                 push={pushAndDispatch}
                 component={ResultsContainer}/>
+              <PrivateRoute
+                path='/decide/:decisionId'
+                isAuthed={isAuthed}
+                isFetching={isFetching}
+                push={pushAndDispatch}
+                component={DecisionContainer}/>
             </Switch>
           </div>
         </div>
@@ -101,11 +117,13 @@ class App extends React.Component {
   }
 }
 
-function mapStateToProps ({users}, props) {
+function mapStateToProps ({users, listeners, decisions}, props) {
   return {
     history: props.history,
     isAuthed: users.get('isAuthed'),
     isFetching: users.get('isFetching'),
+    decisionsListener: listeners.get('decisions') === true,
+    lastUpdated: decisions.get('lastUpdated'),
   }
 }
 
@@ -114,6 +132,7 @@ function mapDispatchToProps (dispatch) {
     {
       ...usersActionCreators,
       ...routeActionCreators,
+      ...decisionsActionCreators,
     },
     dispatch)
 }
