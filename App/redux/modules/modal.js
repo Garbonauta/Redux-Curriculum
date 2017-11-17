@@ -1,7 +1,7 @@
-import { addDecision } from 'redux/modules/decisions'
 import { formatDecision } from 'helpers/utils'
 import { saveToDecisions } from 'helpers/api'
 import { Map } from 'immutable'
+import { addDecision } from './decisions'
 
 const MODAL_OPEN = 'MODAL_OPEN'
 const MODAL_CLOSE = 'MODAL_CLOSE'
@@ -43,8 +43,8 @@ export function saveAndCloseModal () {
         })
       const {decisionId, decisionPromise} = saveToDecisions(decision)
       decisionPromise
+        .then(() => dispatch(addDecision(decisionId, decision)))
         .then(() => {
-          dispatch(addDecision(decisionId, decision))
           dispatch(closeModal())
         })
         .catch((err) => {

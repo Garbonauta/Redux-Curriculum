@@ -21,12 +21,50 @@ export function fetchUsersDecisions (uid) {
     })
 }
 
+export function saveUsersDecision (uid, decisionId, decision) {
+  return db.collection('users').doc(uid).collection('decisionsMade').doc(decisionId).set(decision)
+}
+
 export function listenToDecisions (cb, errorCB) {
   db.collection('decisions').onSnapshot((snapshot) => {
     let decisions = {}
-    snapshot.forEach((doc) => {
-      decisions[doc.id] = doc.data()
+    snapshot.docChanges.forEach((change) => {
+      if (change.type === 'added' || change.type === 'modified') {
+        const doc = change.doc
+        decisions[doc.id] = doc.data()
+      }
     })
-    cb({decisions})
+    const sortedIds = Object.keys(decisions).sort((a, b) => decisions[b].createDate - decisions[a].createDate)
+    cb({decisions, sortedIds})
   }, errorCB)
+}
+
+export function addVoteDecision (decisionId, choice) {
+  const docRef = db.collection('decisions').doc(decisionId)
+  db.runTransaction((transaction) => {
+    return transaction.get(docRef)
+      .then((doc) => {
+        const chosen = doc.data()[choice.chosen]
+        transaction.update(docRef, {[choice.chosen]: {
+          text: chosen.text,
+          count: chosen.count + 1,
+        }})
+      })
+  })
+}
+
+export function removeVoteDecision (decisionId, choice) {
+  const docRef = db.collection('decisions').doc(decisionId)
+  db.runTransaction((transaction) => {
+    return transaction.get(docRef)
+      .then((doc) => {
+        const chosen = doc.data()[choice.chosen]
+        const newCount = chosen.count - 1
+        transaction.update(docRef, {[choice.chosen]: {
+          text: chosen.text,
+          count: newCount,
+
+        }})
+      })
+  })
 }

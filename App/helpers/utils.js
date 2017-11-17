@@ -25,6 +25,13 @@ export function formatDecision (
   }
 }
 
+export function formatUsersDecision (decisionNumber, text) {
+  return {
+    chosen: decisionNumber,
+    text,
+  }
+}
+
 export function formatPercent (decisionCount, totalCount) {
   if (totalCount === 0) {
     return '0%'

@@ -1,4 +1,4 @@
-import { Map } from 'immutable'
+import { Map, fromJS } from 'immutable'
 import auth, { logout, saveUser } from 'helpers/auth'
 import { fetchUsersDecisions } from 'helpers/api'
 import { formatUserInfo } from 'helpers/utils'
@@ -10,6 +10,7 @@ const FETCHING_USER_SUCCESS = 'FETCHING_USER_SUCCESS'
 const FETCHING_USER_ERROR = 'FETCHING_USER_ERROR'
 const REMOVE_USER_FETCHING = 'REMOVE_USER_FETCHING'
 const ADD_USERS_MADE_DECISIONS = 'ADD_USERS_MADE_DECISIONS'
+const ADD_USER_DECISION = 'ADD_USER_DECISION'
 
 export function authUser (uid) {
   return {
@@ -44,6 +45,15 @@ function fetchingUserFailure (error) {
   return {
     type: FETCHING_USER_ERROR,
     error: 'There was an Error fetching the user',
+  }
+}
+
+export function addUserDecision (uid, decisionId, userDecision) {
+  return {
+    type: ADD_USER_DECISION,
+    uid,
+    decisionId,
+    userDecision,
   }
 }
 
@@ -87,6 +97,45 @@ export function fetchAndHandleAuthedUser () {
   }
 }
 
+export function logoutAndUnauth () {
+  return function (dispatch) {
+    logout()
+    dispatch(unAuthUser())
+  }
+}
+
+const initialUserDecisionState = Map({
+  chosen: '',
+  text: '',
+})
+
+function userDecision (state = initialUserDecisionState, action) {
+  switch (action.type) {
+    case ADD_USER_DECISION:
+      return state.merge({
+        chosen: action.userDecision.chosen,
+        text: action.userDecision.text,
+      })
+    default :
+      return state
+  }
+}
+
+function userDecisions (state = Map({}), action) {
+  switch (action.type) {
+    case ADD_USERS_MADE_DECISIONS :
+      return fromJS({
+        ...action.usersDecisions,
+      })
+    case ADD_USER_DECISION :
+      return state.merge({
+        [action.decisionId]: userDecision(state.get(action.decisionId), action),
+      })
+    default :
+      return state
+  }
+}
+
 const initialUserState = Map({
   lastUpdated: 0,
   decisionsMade: Map({}),
@@ -106,7 +155,11 @@ function user (state = initialUserState, action) {
       })
     case ADD_USERS_MADE_DECISIONS :
       return state.merge({
-        decisionsMade: Map(action.usersDecisions),
+        decisionsMade: fromJS(action.usersDecisions),
+      })
+    case ADD_USER_DECISION :
+      return state.merge({
+        decisionsMade: userDecisions(state.get('decisionsMade'), action),
       })
     default :
       return state
@@ -151,7 +204,8 @@ export default function users (state = initialState, action) {
       return state.merge({
         isFetching: false,
       })
-    case ADD_USERS_MADE_DECISIONS:
+    case ADD_USERS_MADE_DECISIONS :
+    case ADD_USER_DECISION :
       return state.merge({
         [action.uid]: user(state.get(action.uid), action),
       })

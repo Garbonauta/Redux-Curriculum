@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { HomeContainer, AuthenticateContainer, ResultsContainer, DecisionContainer } from 'containers'
+import { HomeContainer, AuthenticateContainer, ResultsContainer,
+  DecisionContainer, LogoutContainer } from 'containers'
 import { Navigation } from 'components'
 import { formatUserInfo, staleDecisions } from 'helpers/utils'
 import * as usersActionCreators from 'redux/modules/users'
@@ -72,7 +73,7 @@ class App extends React.Component {
       }
     })
     if (!this.props.decisionsListener || staleDecisions(this.props.lastUpdated)) {
-      this.props.setAndHandleDecisionListener()
+      this.props.setAndHandleDecisionListener(this.props.lastUpdated)
     }
   }
 
@@ -109,6 +110,9 @@ class App extends React.Component {
                 isFetching={isFetching}
                 push={pushAndDispatch}
                 component={DecisionContainer}/>
+              <Route
+                path='/logout'
+                component={LogoutContainer}/>
             </Switch>
           </div>
         </div>
