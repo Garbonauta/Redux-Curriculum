@@ -20,6 +20,7 @@
     "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
+    "@types/react": "^16.0.25",
     "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.2",
     "babel-loader": "^7.1.2",
